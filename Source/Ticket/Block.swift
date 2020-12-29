@@ -58,13 +58,27 @@ public extension Block {
         return Block(Text.init(content))
     }
     
+    // centered text
+    static func centeredText(_ content: String) -> Block {
+        return Block(Text.init(content: content, predefined: .alignment(.center)))
+    }
+    
     static func text(_ text: Text) -> Block {
         return Block(text)
     }
     
+    static func smallText(_ content: String) -> Block {
+        return Block(Text.init(content: content, predefined: .small, .alignment(.center))) // , feedPoints: 50
+    }
+    
     // key    value
     static func kv(k: String, v: String) -> Block {
-        return Block(Text.kv(k: k, v: v))
+        return Block(Text.kv(k: k, v: v, attributes: [Text.PredefinedAttribute.bold]))
+    }
+    
+    // key    value total
+    static func kv_total(k: String, v: String) -> Block {
+        return Block(Text.kv(fontDensity: 24, k: k, v: v, attributes: [Text.PredefinedAttribute.scale(.l1)]))
     }
     
     // dividing

@@ -8,6 +8,18 @@
 
 import Foundation
 
+extension Data {
+    struct HexEncodingOptions: OptionSet {
+        let rawValue: Int
+        static let upperCase = HexEncodingOptions(rawValue: 1 << 0)
+    }
+
+    func hexEncodedString(options: HexEncodingOptions = []) -> String {
+        let format = options.contains(.upperCase) ? "%02hhX" : "%02hhx"
+        return map { String(format: format, $0) }.joined()
+    }
+}
+
 public struct Text: BlockDataProvider {
     
     let content: String
@@ -25,8 +37,29 @@ public struct Text: BlockDataProvider {
             result.append(Data(attrs.flatMap { $0.attribute }))
         }
         
+        // Set codepage to Windows1252
+        result.append(Data([0x1B, 0x74, 0x47]))
+        
         if let cd = content.data(using: encoding) {
             result.append(cd)
+        }
+        
+        var index = 0
+        while index < result.count {
+            let byte = result[index]
+            
+            // Euro
+            if byte == 0x80 {
+                let euro_cp866 = Data([
+                   0x1B, 0x74, 0x35, 0xD5,
+                   0x1B, 0x74, 0x47,
+                ])
+                result.replaceSubrange(
+                    index...index,
+                    with: euro_cp866)
+            }
+            
+            index += 1
         }
         
         return result
@@ -55,6 +88,7 @@ public extension Text {
         case light
         case scale(ScaleLevel)
         case feed(UInt8)
+        case condensed
         
         public var attribute: [UInt8] {
             switch self {
@@ -64,6 +98,8 @@ public extension Text {
                 return ESC_POSCommand.emphasize(mode: true).rawValue
             case .small:
                 return ESC_POSCommand.font(1).rawValue
+            case .condensed:
+                return [0x1B, 0x33, 3]
             case .light:
                 return ESC_POSCommand.color(n: 1).rawValue
             case let .scale(v):

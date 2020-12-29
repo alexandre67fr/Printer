@@ -72,6 +72,11 @@ extension ESC_POSCommand {
         return ESC_POSCommand([27, 77, n])
     }
     
+    // Select character font
+    static func cpi(_ n: UInt8) -> ESC_POSCommand {
+        return ESC_POSCommand([27, 193, n])
+    }
+    
     // Selects the printing color specified by n
     static func color(n: UInt8) -> ESC_POSCommand {
         return ESC_POSCommand([27, 114, n])

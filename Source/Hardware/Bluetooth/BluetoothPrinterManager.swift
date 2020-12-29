@@ -35,7 +35,7 @@ private extension CBPeripheral {
 
 public struct BluetoothPrinter {
 
-    public enum State {
+    enum State {
 
         case disconnected
         case connecting
@@ -43,12 +43,12 @@ public struct BluetoothPrinter {
         case disconnecting
     }
 
-    public let name: String?
-    public let identifier: UUID
+    let name: String?
+    let identifier: UUID
 
-    public var state: State
+    var state: State
 
-    public var isConnecting: Bool {
+    var isConnecting: Bool {
         return state == .connecting
     }
 
@@ -87,9 +87,9 @@ public class BluetoothPrinterManager {
     private let centralManagerDelegate = BluetoothCentralManagerDelegate(BluetoothPrinterManager.specifiedServices)
     private let peripheralDelegate = BluetoothPeripheralDelegate(BluetoothPrinterManager.specifiedServices, characteristics: BluetoothPrinterManager.specifiedCharacteristics)
 
-    public weak var delegate: PrinterManagerDelegate?
+    weak var delegate: PrinterManagerDelegate?
 
-    public var errorReport: ((PError) -> ())?
+    var errorReport: ((PError) -> ())?
 
     private var connectTimer: Timer?
 

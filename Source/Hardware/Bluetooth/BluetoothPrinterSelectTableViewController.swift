@@ -49,9 +49,13 @@ public class BluetoothPrinterSelectTableViewController: UITableViewController {
         cell.accessoryType = printer.state == .connected ? .checkmark : .none
 
         if printer.isConnecting {
-            let v = UIActivityIndicatorView(style: .gray)
-            v.startAnimating()
-            cell.accessoryView = v
+            if #available(iOS 13.0, *) {
+                let v = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+                v.startAnimating()
+                cell.accessoryView = v
+            } else {
+                // Fallback on earlier versions
+            }
         } else {
             cell.accessoryView = nil
             cell.setEditing(false, animated: false)
